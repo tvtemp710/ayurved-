@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AyurVeda – Authentic Ayurvedic Products</title>
+  <meta name="description" content="100% natural Ayurvedic herbs, oils, and supplements. Cart, Stripe checkout, email confirmation.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Lato', 'Open Sans', sans-serif; }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* ---------- Custom Animations & Effects ---------- */
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInScale {
+      0% { opacity: 0; transform: scale(0.96); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 0 rgba(107, 142, 35, 0.5); }
+      70% { box-shadow: 0 0 0 12px rgba(107, 142, 35, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(107, 142, 35, 0); }
+    }
+    @keyframes badgeBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.35); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes gentleFloat {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    /* Fade-up scroll reveal */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .fade-up.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Card hover effects */
+    .product-card {
+      transition: all 0.3s ease;
+      will-change: transform;
+    }
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.2);
+    }
+    .product-card:hover .product-img {
+      transform: scale(1.03);
+    }
+    .product-img {
+      transition: transform 0.5s ease;
+    }
+    
+    /* Button hover & press */
+    .btn-organic {
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-organic:active {
+      transform: scale(0.96);
+    }
+    .btn-organic::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.4) 10%, transparent 70%);
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      transition: transform 0.4s, opacity 0.4s;
+      border-radius: 50%;
+    }
+    .btn-organic:active::after {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 1;
+      transition: 0s;
+    }
+    
+    /* Interactive cart badge */
+    .cart-badge-pulse {
+      animation: badgeBounce 0.3s ease-in-out;
+    }
+    
+    /* Hero overlay text animation */
+    .hero-text {
+      animation: fadeInScale 1s ease-out forwards;
+    }
+    
+    /* Nav link hover effect */
+    .nav-link {
+      position: relative;
+      transition: color 0.2s;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #6B8E23;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    /* Toast enhanced */
+    #customToast {
+      backdrop-filter: blur(8px);
+      background: rgba(30, 30, 30, 0.9);
+      border-left: 4px solid #6B8E23;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+      animation: fadeInUp 0.3s ease-out;
+    }
+    
+    /* Image loading subtle */
+    img {
+      transition: opacity 0.3s;
+    }
+    
+    /* Cart item remove animation */
+    .cart-item-removing {
+      opacity: 0;
+      transform: translateX(20px);
+      transition: all 0.2s ease;
+    }
+    
+    /* Main content fade transition */
+    #app {
+      animation: fadeInScale 0.4s ease-out;
+    }
+    
+    /* Floating effect for feature icons */
+    .float-icon {
+      transition: transform 0.3s ease;
+    }
+    .feature-card:hover .float-icon {
+      transform: translateY(-5px);
+    }
+    
+    /* Hero parallax subtle movement */
+    .hero-bg {
+      transition: transform 0.1s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-[#F5F5DC] text-gray-800">
+
+  <!-- ==================== NAVBAR ==================== -->
+<nav class="sticky top-0 z-50 bg-black/40 backdrop-blur-md shadow-md transition-all duration-300">
+  <div class="container mx-auto px-4 py-3 flex justify-between items-center flex-wrap gap-2">
+    <a href="#" data-nav="home" class="flex items-center space-x-2 group">
+      <span class="text-2xl font-bold text-white hover:text-[#d4e6a3] transition duration-300 group-hover:scale-105 inline-block">AyurVeda</span>
+    </a>
+    <div class="flex items-center space-x-6">
+      <a href="#" data-nav="home" class="nav-link text-white hover:text-[#d4e6a3] transition">Home</a>
+      <a href="#" data-nav="products" class="nav-link text-white hover:text-[#d4e6a3] transition">Products</a>
+      <a href="#" data-nav="cart" class="relative group">
+        <svg class="h-6 w-6 text-white group-hover:text-[#d4e6a3] transition duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 18v3"></path>
+        </svg>
+        <span id="cartCountBadge" class="absolute -top-2 -right-2 bg-[#6B8E23] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden transition-all">0</span>
+      </a>
+    </div>
+  </div>
+</nav>
+  <main id="app" class="min-h-[70vh]"></main>
+
+  <footer class="bg-[#6B8E23] text-white text-center py-4 mt-12">
+    <p>&copy; 2025 Ayurvedic Wellness. Nature's path to holistic health.</p>
+  </footer>
+
+  <script>
+    // ==================== PRODUCT DATA ====================
+    const PRODUCTS = [
+      { id: 1, name: "Ashwagandha Capsules", price: 24.99, description: "Organic ashwagandha root extract for stress relief and vitality. Helps reduce cortisol and promote calm energy.", image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop&auto=format" },
+      { id: 2, name: "Triphala Powder", price: 18.99, description: "Classic Ayurvedic blend of three fruits for digestive health and gentle detoxification.", image: "https://images.unsplash.com/photo-1596040033229-a9821a4cc9f8?w=400&h=300&fit=crop&auto=format" },
+      { id: 3, name: "Brahmi Oil", price: 29.99, description: "Nourishing hair oil with brahmi and coconut base. Promotes hair growth and soothes scalp.", image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8103?w=400&h=300&fit=crop&auto=format" },
+      { id: 4, name: "Neem & Tulsi Soap", price: 8.99, description: "Natural antibacterial soap for clear, healthy skin. Handmade with neem extract and holy basil.", image: "https://images.unsplash.com/photo-1600857062241-98e5dba7f214?w=400&h=300&fit=crop&auto=format" },
+      { id: 5, name: "Herbal Immunity Tea", price: 14.99, description: "Tulsi, ginger, and turmeric blend for immune support and winter wellness.", image: "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?w=400&h=300&fit=crop&auto=format" },
+      { id: 6, name: "Turmeric Gold Capsules", price: 27.99, description: "High-absorption curcumin with black pepper extract for joint health and inflammation support.", image: "https://images.unsplash.com/photo-1615485500704-8e990f3c0fb9?w=400&h=300&fit=crop&auto=format" }
+    ];
+
+    // ==================== CART LOGIC ====================
+    const CART_KEY = 'ayurveda_cart';
+
+    function getCart() { return localStorage.getItem(CART_KEY) ? JSON.parse(localStorage.getItem(CART_KEY)) : []; }
+    function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); updateCartBadge(true); if (currentPage === 'cart') renderPage(); }
+    
+    function addToCart(product) {
+      const cart = getCart();
+      const existing = cart.find(item => item.id === product.id);
+      if (existing) existing.quantity += 1;
+      else cart.push({ ...product, quantity: 1 });
+      saveCart(cart);
+      showToast(`✨ ${product.name} added to cart`);
+      // add micro-interaction: pulse effect on add button (handled in global listener)
+    }
+
+    function removeFromCart(productId) { let cart = getCart(); cart = cart.filter(item => item.id !== productId); saveCart(cart); }
+    function updateQuantity(productId, newQty) { if (newQty < 1) return removeFromCart(productId); const cart = getCart(); const item = cart.find(i => i.id === productId); if (item) item.quantity = newQty; saveCart(cart); }
+    function getCartTotal() { return getCart().reduce((sum, i) => sum + (i.price * i.quantity), 0); }
+    function getCartCount() { return getCart().reduce((sum, i) => sum + i.quantity, 0); }
+    function clearCart() { localStorage.removeItem(CART_KEY); updateCartBadge(true); if (currentPage === 'cart') renderPage(); }
+
+    function updateCartBadge(animate = false) {
+      const count = getCartCount();
+      const badge = document.getElementById('cartCountBadge');
+      if (badge) {
+        if (count > 0) {
+          badge.textContent = count;
+          badge.classList.remove('hidden');
+          if (animate) {
+            badge.classList.add('cart-badge-pulse');
+            setTimeout(() => badge.classList.remove('cart-badge-pulse'), 300);
+          }
+        } else { badge.classList.add('hidden'); }
+      }
+    }
+
+    function showToast(msg) {
+      let toast = document.getElementById('customToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'customToast';
+        toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900/90 backdrop-blur-md text-white px-5 py-3 rounded-xl shadow-2xl z-50 transition-all duration-300 opacity-0 flex items-center gap-2 border-l-4 border-[#6B8E23]';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<span class="text-[#b9e06e]">🌿</span> ${msg}`;
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%) translateY(10px)'; }, 2700);
+    }
+
+    // ==================== ROUTING ====================
+    let currentPage = 'home';
+    let currentProductId = null;
+
+    function navigateTo(page, params = {}) {
+      currentPage = page;
+      if (page === 'product' && params.id) {
+        currentProductId = parseInt(params.id);
+        window.history.pushState({ page, id: currentProductId }, '', `/?page=product&id=${currentProductId}`);
+      } else {
+        currentProductId = null;
+        window.history.pushState({ page }, '', page === 'home' ? '/' : `/?page=${page}`);
+      }
+      renderPage();
+    }
+
+    function renderPage() {
+      const app = document.getElementById('app');
+      if (!app) return;
+      // reset animation fade
+      app.style.animation = 'none';
+      setTimeout(() => app.style.animation = 'fadeInScale 0.4s ease-out', 10);
+      
+      if (currentPage === 'product' && currentProductId) {
+        const product = PRODUCTS.find(p => p.id === currentProductId);
+        if (!product) { app.innerHTML = `<div class="container mx-auto px-4 py-16 text-center"><h2 class="text-2xl font-bold text-red-600">Product not found</h2><a href="#" data-nav="products" class="text-[#6B8E23] underline">Back to products</a></div>`; attachNavLinks(); return; }
+        app.innerHTML = renderProductDetail(product);
+        attachProductDetailHandlers(product);
+      } else {
+        if (currentPage === 'home') app.innerHTML = renderHome();
+        else if (currentPage === 'products') app.innerHTML = renderProducts();
+        else if (currentPage === 'cart') app.innerHTML = renderCartPage();
+        else if (currentPage === 'success') app.innerHTML = renderSuccessLoader();
+        else app.innerHTML = renderHome();
+        if (currentPage === 'home') attachHomeHandlers();
+        if (currentPage === 'products') attachProductListHandlers();
+        if (currentPage === 'cart') attachCartHandlers();
+        if (currentPage === 'success') handleSuccessPage();
+      }
+      attachNavLinks();
+      initScrollReveal(); // reveal animated elements after render
+    }
+
+    // Scroll reveal observer
+    function initScrollReveal() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    }
+
+    // ==================== HOME PAGE WITH ENHANCEMENTS ====================
+    function renderHome() {
+      const featured = PRODUCTS.slice(0, 3);
+      return `
+        <section class="relative h-screen flex items-center justify-center overflow-hidden">
+          <div class="absolute inset-0 hero-bg bg-[url('./Ultra-realistic_top-down_flat_202604281710.jpeg')] bg-cover bg-center scale-105 transition-transform duration-10000"></div>
+          <div class="absolute inset-0 bg-black/40"></div>
+          
+        </section>
+
+        <section class="py-16 bg-white fade-up">
+          <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">Featured Products</h2>
+            <p class="text-center text-gray-600 mb-12">Handpicked for your wellness journey</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              ${featured.map(p => `
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden product-card transition-all duration-300 cursor-pointer">
+                  <div class="relative pt-[75%] overflow-hidden"><img src="${p.image}" alt="${p.name}" loading="lazy" class="product-img absolute top-0 left-0 w-full h-full object-cover"></div>
+                  <div class="p-5">
+                    <h3 class="text-xl font-semibold">${p.name}</h3>
+                    <p class="text-sm text-gray-600 mb-2 line-clamp-2">${p.description}</p>
+                    <div class="flex justify-between items-center mt-3">
+                      <span class="text-2xl font-bold text-[#6B8E23]">$${p.price.toFixed(2)}</span>
+                      <button data-id="${p.id}" class="view-product-btn bg-gray-100 text-gray-800 px-4 py-2 rounded-full hover:bg-gray-200 transition-all hover:scale-105">Details</button>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="text-center mt-10">
+              <a href="#" data-nav="products" class="inline-flex items-center space-x-2 border-2 border-[#6B8E23] text-[#6B8E23] px-8 py-3 rounded-full font-semibold hover:bg-[#6B8E23] hover:text-white transition-all duration-300 hover:scale-105">View All Products →</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="py-16 bg-[#F5F5DC] fade-up">
+          <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Why Choose AyurVeda?</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+              <div class="text-center p-6 rounded-2xl feature-card transition-all hover:bg-white/60 duration-300"><div class="float-icon inline-block p-3 bg-[#6B8E23]/10 rounded-full mb-4 transition-all"><svg class="h-8 w-8 text-[#6B8E23]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div><h3 class="text-xl font-semibold mb-2">100% Organic</h3><p class="text-gray-600">Certified organic ingredients from sustainable farms</p></div>
+              <div class="text-center p-6 rounded-2xl feature-card transition-all hover:bg-white/60 duration-300"><div class="float-icon inline-block p-3 bg-[#6B8E23]/10 rounded-full mb-4"><svg class="h-8 w-8 text-[#6B8E23]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><h3 class="text-xl font-semibold mb-2">Traditional Formulations</h3><p class="text-gray-600">Authentic recipes passed down for generations</p></div>
+              <div class="text-center p-6 rounded-2xl feature-card transition-all hover:bg-white/60 duration-300"><div class="float-icon inline-block p-3 bg-[#6B8E23]/10 rounded-full mb-4"><svg class="h-8 w-8 text-[#6B8E23]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div><h3 class="text-xl font-semibold mb-2">Lab Tested</h3><p class="text-gray-600">Third-party tested for purity and potency</p></div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function attachHomeHandlers() {
+      document.querySelectorAll('.view-product-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); const id = parseInt(btn.dataset.id); navigateTo('product', { id }); });
+      });
+    }
+
+    // ==================== PRODUCT DETAIL & LIST ====================
+    function renderProductDetail(product) {
+      return `
+        <div class="container mx-auto px-4 py-12 fade-up">
+          <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden transition-all duration-500 hover:shadow-xl">
+            <div class="md:flex">
+              <div class="md:w-1/2 overflow-hidden"><img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"></div>
+              <div class="md:w-1/2 p-6 md:p-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">${product.name}</h1>
+                <p class="text-2xl font-bold text-[#6B8E23] mb-4">$${product.price.toFixed(2)}</p>
+                <p class="text-gray-600 mb-6 leading-relaxed">${product.description}</p>
+                <div class="flex items-center gap-4">
+                  <button id="addToCartDetail" class="btn-organic bg-[#6B8E23] text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition flex-1 hover:shadow-md">Add to Cart 🌿</button>
+                  <button data-nav="cart" class="border-2 border-[#6B8E23] text-[#6B8E23] px-6 py-3 rounded-lg font-semibold hover:bg-[#6B8E23] hover:text-white transition-all hover:scale-105">Go to Cart</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function attachProductDetailHandlers(product) {
+      const addBtn = document.getElementById('addToCartDetail');
+      if (addBtn) addBtn.addEventListener('click', () => { addToCart(product); addBtn.classList.add('scale-95'); setTimeout(() => addBtn.classList.remove('scale-95'), 150); });
+    }
+
+    function renderProducts() {
+      return `
+        <div class="container mx-auto px-4 py-8">
+          <div class="text-center mb-12 fade-up">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Our Complete Collection</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">Discover nature's healing power with our carefully curated range of authentic Ayurvedic products</p>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            ${PRODUCTS.map(p => `
+              <div class="bg-white rounded-2xl shadow-md overflow-hidden product-card transition-all">
+                <div class="relative pt-[75%] overflow-hidden"><img src="${p.image}" alt="${p.name}" loading="lazy" class="product-img absolute top-0 left-0 w-full h-full object-cover"></div>
+                <div class="p-5">
+                  <h3 class="text-xl font-semibold">${p.name}</h3>
+                  <p class="text-sm text-gray-600 mb-2 line-clamp-2">${p.description}</p>
+                  <div class="flex justify-between items-center mt-3">
+                    <span class="text-2xl font-bold text-[#6B8E23]">$${p.price.toFixed(2)}</span>
+                    <div class="flex gap-2">
+                      <button data-id="${p.id}" class="view-product-btn bg-gray-100 text-gray-800 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition hover:scale-105">Details</button>
+                      <button data-id="${p.id}" data-name="${p.name}" data-price="${p.price}" data-image="${p.image}" class="add-to-cart-btn bg-[#6B8E23] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition hover:scale-105 btn-organic">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function attachProductListHandlers() {
+      document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const product = { id: parseInt(btn.dataset.id), name: btn.dataset.name, price: parseFloat(btn.dataset.price), image: btn.dataset.image };
+          addToCart(product);
+          btn.classList.add('scale-95');
+          setTimeout(() => btn.classList.remove('scale-95'), 150);
+        });
+      });
+      document.querySelectorAll('.view-product-btn').forEach(btn => {
+        btn.addEventListener('click', () => { const id = parseInt(btn.dataset.id); navigateTo('product', { id }); });
+      });
+    }
+
+    // ==================== CART PAGE WITH ANIMATIONS ====================
+    function renderCartPage() {
+      const cart = getCart();
+      if (cart.length === 0) {
+        return `<div class="container mx-auto px-4 py-16 text-center fade-up"><svg class="h-24 w-24 mx-auto text-gray-400 mb-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 18v3"></path></svg><h2 class="text-2xl font-semibold text-gray-700 mb-4">Your cart is empty</h2><a href="#" data-nav="products" class="bg-[#6B8E23] text-white px-6 py-3 rounded-full hover:scale-105 transition inline-block">Browse Products</a></div>`;
+      }
+      const total = getCartTotal();
+      const itemsHtml = cart.map(item => `
+        <div class="cart-item p-4 flex flex-wrap sm:flex-nowrap items-center gap-4 border-b transition-all duration-200" data-id="${item.id}">
+          <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-lg shadow-sm">
+          <div class="flex-grow"><h3 class="font-semibold text-lg">${item.name}</h3><p class="text-[#6B8E23] font-bold">$${item.price.toFixed(2)}</p></div>
+          <div class="flex items-center space-x-2">
+            <button data-id="${item.id}" data-delta="-1" class="qty-btn bg-gray-100 hover:bg-gray-200 w-8 h-8 rounded-full transition-all">−</button>
+            <span class="w-8 text-center font-medium">${item.quantity}</span>
+            <button data-id="${item.id}" data-delta="1" class="qty-btn bg-gray-100 hover:bg-gray-200 w-8 h-8 rounded-full transition-all">+</button>
+            <button data-id="${item.id}" class="remove-btn text-red-500 hover:bg-red-50 p-2 rounded-full ml-2 transition">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+      return `<div class="container mx-auto px-4 py-8"><h1 class="text-3xl font-bold text-gray-800 mb-8 fade-up">Your Cart</h1><div class="grid lg:grid-cols-3 gap-8"><div class="lg:col-span-2 bg-white rounded-xl shadow-md overflow-hidden"><div class="divide-y cart-items-list">${itemsHtml}</div></div><div class="lg:col-span-1"><div class="bg-white rounded-xl shadow-md p-6 sticky top-24 transition-all hover:shadow-lg"><h2 class="text-xl font-bold mb-4">Order Summary</h2><div class="border-t border-b py-4 mb-4"><div class="flex justify-between font-bold mt-2 pt-2 border-t"><span>Total</span><span class="text-[#6B8E23] text-2xl">$${total.toFixed(2)}</span></div></div><h3 class="font-semibold mb-3">Customer Information</h3><div class="space-y-3"><input type="text" id="fullName" placeholder="Full Name *" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#6B8E23] transition"><input type="email" id="email" placeholder="Email *" class="w-full px-3 py-2 border rounded-lg"><input type="tel" id="phone" placeholder="Phone *" class="w-full px-3 py-2 border rounded-lg"><textarea id="address" rows="3" placeholder="Delivery Address *" class="w-full px-3 py-2 border rounded-lg"></textarea></div><button id="checkoutBtn" class="w-full mt-6 bg-[#6B8E23] text-white py-3 rounded-lg font-semibold hover:bg-opacity-90 transition transform hover:scale-[1.02] btn-organic">Proceed to Payment 💳</button></div></div></div></div>`;
+    }
+
+    function attachCartHandlers() {
+      document.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); const id = parseInt(btn.dataset.id); const delta = parseInt(btn.dataset.delta); const cart = getCart(); const item = cart.find(i => i.id === id); if (item) updateQuantity(id, item.quantity + delta); });
+      });
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => { const id = parseInt(btn.dataset.id); const el = document.querySelector(`.cart-item[data-id="${id}"]`); if(el) { el.classList.add('cart-item-removing'); setTimeout(() => removeFromCart(id), 200); } else removeFromCart(id); });
+      });
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      if (checkoutBtn) checkoutBtn.addEventListener('click', handleCheckout);
+    }
+
+    async function handleCheckout() {
+      const fullName = document.getElementById('fullName')?.value.trim(); const email = document.getElementById('email')?.value.trim(); const phone = document.getElementById('phone')?.value.trim(); const address = document.getElementById('address')?.value.trim();
+      if (!fullName || !email || !phone || !address) { showToast('Please fill all customer fields'); return; }
+      if (!/^\S+@\S+\.\S+$/.test(email)) { showToast('Enter a valid email'); return; }
+      if (getCart().length === 0) { showToast('Cart is empty'); return; }
+      try {
+        const res = await fetch('/api/create-checkout-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: getCart(), customer: { fullName, email, phone, address } }) });
+        const data = await res.json();
+        if (data.url) window.location.href = data.url;
+        else showToast('Checkout error: ' + (data.error || 'Unknown'));
+      } catch (err) { showToast('Network error. Please try again.'); }
+    }
+
+    function renderSuccessLoader() { return `<div class="container mx-auto px-4 py-16 text-center fade-up" id="successContent"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6B8E23] mx-auto mb-4"></div><p class="text-gray-600">Verifying your payment...</p></div>`; }
+    async function handleSuccessPage() {
+      const urlParams = new URLSearchParams(window.location.search); const sessionId = urlParams.get('session_id'); const container = document.getElementById('successContent');
+      if (!sessionId) { container.innerHTML = `<div class="text-red-500">⚠️ Missing session ID.</div><a href="#" data-nav="home" class="mt-4 inline-block bg-[#6B8E23] text-white px-6 py-2 rounded-lg">Go Home</a>`; attachNavLinks(); return; }
+      try {
+        const res = await fetch('/api/send-order-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }) });
+        const data = await res.json();
+        if (data.success) { clearCart(); container.innerHTML = `<svg class="h-20 w-20 text-green-500 mx-auto mb-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><h1 class="text-3xl font-bold text-gray-800 mb-2">Thank You for Your Order!</h1><p class="text-gray-600 mb-4">A confirmation email has been sent.</p><a href="#" data-nav="home" class="bg-[#6B8E23] text-white px-6 py-3 rounded-lg inline-block hover:scale-105 transition">Continue Shopping</a>`; }
+        else throw new Error(data.error);
+      } catch { container.innerHTML = `<div class="text-red-500">⚠️ Payment verification failed.</div><a href="#" data-nav="home" class="mt-4 inline-block bg-[#6B8E23] text-white px-6 py-2 rounded-lg">Go Home</a>`; }
+      attachNavLinks();
+    }
+
+    function attachNavLinks() { document.querySelectorAll('[data-nav]').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); const page = link.getAttribute('data-nav'); if (page !== 'success') navigateTo(page); }); }); }
+
+    window.addEventListener('popstate', () => { const params = new URLSearchParams(window.location.search); const page = params.get('page'); if (page === 'product') { const id = params.get('id'); if (id) { currentPage = 'product'; currentProductId = parseInt(id); } else currentPage = 'home'; } else { currentPage = page === 'home' ? 'home' : (page || 'home'); currentProductId = null; } renderPage(); });
+    (function init() { const params = new URLSearchParams(window.location.search); const page = params.get('page'); if (page === 'product') { const id = params.get('id'); if (id) { currentPage = 'product'; currentProductId = parseInt(id); } else currentPage = 'home'; } else if (page === 'cart') currentPage = 'cart'; else if (page === 'success') currentPage = 'success'; else if (page === 'products') currentPage = 'products'; else currentPage = 'home'; renderPage(); updateCartBadge(); })();
+  </script>
+</body>
+</html>
